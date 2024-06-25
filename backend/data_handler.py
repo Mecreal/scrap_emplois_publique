@@ -1,8 +1,10 @@
 import json
 import shutil
+import os
 
 JSON_FILE = 'something.json'
-DESTINATION_PATH = '/var/www/abouabid/emploi/something.json'
+DESTINATION_PATH = '../frontend/something.json'
+# DESTINATION_PATH = '/var/www/abouabid/emploi/something.json'
 
 def load_existing_data():
     try:
@@ -10,14 +12,16 @@ def load_existing_data():
             return json.load(f)
     except FileNotFoundError:
         print(f"{JSON_FILE} not found. Starting with an empty list.")
-        return []
+        return {'data': [], 'last_updated': None}
     except json.JSONDecodeError:
         print(f"Error decoding JSON from {JSON_FILE}. Starting with an empty list.")
-        return []
+        return {'data': [], 'last_updated': None}
 
 def save_data(data):
     with open(JSON_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
+    # Ensure the destination directory exists
+    os.makedirs(os.path.dirname(DESTINATION_PATH), exist_ok=True)
     shutil.copy(JSON_FILE, DESTINATION_PATH)
     print(f"Data has been saved to {JSON_FILE} and copied to {DESTINATION_PATH}")
 
